@@ -56,3 +56,11 @@ class Accounts(models.Model):
 
     class Meta:
         db_table = "pb_accounts"
+        
+class BlackListedTokens(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    token = models.CharField(max_length=255)
+    blacklisted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "pb_blacklisted_tokens"

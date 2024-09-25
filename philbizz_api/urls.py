@@ -4,6 +4,7 @@ from django.conf import settings
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from philbizz_api.views.auth.auth_views import ValidateTokenizeView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -21,6 +22,9 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('accounts/create', AccountCreationView.as_view(), name='account_create'),  # Adjusted path
     path('accounts/login', AccountLoginView.as_view(), name='account_login'),
+    path('auth/validate-tokenize-information', ValidateTokenizeView.as_view(),
+         name='account_validate-tokenize-information'),
+
 ]
 
 if settings.DEBUG:
