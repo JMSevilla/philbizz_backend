@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from philbizz_api.models import AccountStatus, AccessLevel
+from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation
 from philbizz_api.services.repository.account_repository import AccountRepository
+from philbizz_api.services.repository.auth_repository import ValidateTokenizeCommand, AuthRepository
 from philbizz_api.services.utils import ResponseCode
 
 
@@ -29,3 +30,20 @@ class AccountLoginSerializer(serializers.Serializer):
             if process_result == ResponseCode.Unauthorized:
                 raise serializers.ValidationError({'detail': "Invalid credentials."})
         return process_result
+
+class ValidateTokenizeSerializer(serializers.Serializer):
+    access_token = serializers.CharField(write_only=True)
+    account_id = serializers.UUIDField()
+
+    def validate(self, attrs):
+        return attrs
+
+    def validate_token(self, validated_data):
+        command = ValidateTokenizeCommand(**validated_data)
+        result = AuthRepository.validate_tokenize_information(command)
+        return result
+
+class TokenizeInformationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TokenizeInformation
+        fields = '__all__'
