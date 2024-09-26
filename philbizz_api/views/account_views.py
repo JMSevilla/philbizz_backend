@@ -4,11 +4,10 @@ from rest_framework.views import APIView
 from philbizz_api.serializers import AccountCreateSerializer, AccountLoginSerializer
 import logging
 
-from philbizz_api.services.utils import ResponseCode
-
 logger = logging.getLogger(__name__)
 
 class AccountCreationView(APIView):
+    permission_classes = []
     def post(self, request):
         serializer = AccountCreateSerializer(data=request.data)
         if serializer.is_valid():
@@ -23,6 +22,7 @@ class AccountCreationView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AccountLoginView(APIView):
+    permission_classes = []
     def post(self, request):
         serializer = AccountLoginSerializer(data=request.data)
         if serializer.is_valid():

@@ -1,5 +1,6 @@
 from django.urls import path
 from philbizz_api.views.account_views import AccountCreationView, AccountLoginView
+from philbizz_api.views.menu.menu_views import MenuView, MenuListView
 from django.conf import settings
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -24,7 +25,8 @@ urlpatterns = [
     path('accounts/login', AccountLoginView.as_view(), name='account_login'),
     path('auth/validate-tokenize-information', ValidateTokenizeView.as_view(),
          name='account_validate-tokenize-information'),
-
+    path('auth/menus/creation', MenuView.as_view(), name='account_menu'),
+    path('app/get-menus', MenuListView.as_view(), name='app_get_menus'),
 ]
 
 if settings.DEBUG:

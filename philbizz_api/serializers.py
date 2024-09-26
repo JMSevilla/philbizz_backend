@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation
+from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation, Menu
 from philbizz_api.services.repository.account_repository import AccountRepository
 from philbizz_api.services.repository.auth_repository import ValidateTokenizeCommand, AuthRepository
 from philbizz_api.services.utils import ResponseCode
@@ -47,3 +47,18 @@ class TokenizeInformationSerializer(serializers.ModelSerializer):
     class Meta:
         model = TokenizeInformation
         fields = '__all__'
+
+class MenuSerializer(serializers.ModelSerializer):
+    children = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Menu
+        fields = ['id', 'name', 'path', 'parent', 'children']
+
+    def get_children(self, obj):
+        return MenuSerializer(obj.children.all(), many=True).data
+
+    def validate_path(self, value):
+        if not value.startswith('/'):
+            raise serializers.ValidationError("Path must start with a '/' character.")
+        return value
