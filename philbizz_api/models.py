@@ -64,3 +64,15 @@ class BlackListedTokens(models.Model):
 
     class Meta:
         db_table = "pb_blacklisted_tokens"
+
+class Menu(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    name = models.CharField(max_length=255)
+    path = models.CharField(max_length=255)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "pb_menu"
