@@ -10,6 +10,9 @@ class MenuView(APIView):
     def post(self, request):
         return MenuRepository.create_menu(request.data)
 
+    def put(self, request):
+        return MenuRepository.update_menus(request.data)
+
 class MenuListView(APIView):
     permission_classes = []
     def get(self, request):
