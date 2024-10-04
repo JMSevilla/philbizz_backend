@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "philbizz_api",
     'drf_yasg',
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
+    'ckeditor'
 ]
 
 APPEND_SLASH = False

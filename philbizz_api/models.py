@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from enum import Enum
+from ckeditor.fields import RichTextField
 
 class AccessLevel(models.TextChoices):
     ADMIN = 'ADMIN', 'Admin'
@@ -76,3 +77,19 @@ class Menu(models.Model):
 
     class Meta:
         db_table = "pb_menu"
+
+class Blog(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='blogs/', blank=True, null=True)
+    content = RichTextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        db_table = "pb_blog"
+        ordering = ['-created_at']

@@ -1,6 +1,7 @@
 from django.urls import path
 from philbizz_api.views.account_views import AccountCreationView, AccountLoginView
 from philbizz_api.views.menu.menu_views import MenuView, MenuListView
+from philbizz_api.views.blog.blog_views import BlogView
 from django.conf import settings
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -27,6 +28,7 @@ urlpatterns = [
          name='account_validate-tokenize-information'),
     path('auth/menus/creation', MenuView.as_view(), name='account_menu'),
     path('app/get-menus', MenuListView.as_view(), name='app_get_menus'),
+    path('app/blogs', BlogView.as_view(), name='blog-list-create')
 ]
 
 if settings.DEBUG:
