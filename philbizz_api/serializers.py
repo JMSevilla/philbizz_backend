@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation, Menu
+from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation, Menu, Blog
 from philbizz_api.services.repository.account_repository import AccountRepository
 from philbizz_api.services.repository.auth_repository import ValidateTokenizeCommand, AuthRepository
 from philbizz_api.services.utils import ResponseCode
@@ -62,3 +62,8 @@ class MenuSerializer(serializers.ModelSerializer):
         if not value.startswith('/'):
             raise serializers.ValidationError("Path must start with a '/' character.")
         return value
+
+class BlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Blog
+        fields = ['id', 'title', 'description', 'image', 'content', 'created_at', 'updated_at']
