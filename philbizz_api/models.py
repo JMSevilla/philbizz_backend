@@ -1,7 +1,10 @@
+from django.conf import settings
 from django.db import models
 import uuid
 from enum import Enum
 from ckeditor.fields import RichTextField
+
+
 
 class AccessLevel(models.TextChoices):
     ADMIN = 'ADMIN', 'Admin'
@@ -86,10 +89,23 @@ class Blog(models.Model):
     content = RichTextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    likes = models.ManyToManyField(Accounts, related_name='liked_blogs', blank=True)
     def __str__(self):
         return self.title
 
     class Meta:
         db_table = "pb_blog"
         ordering = ['-created_at']
+
+class Comment(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    blog = models.ForeignKey('Blog', related_name='comments', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comment by {self.user} on {self.blog}"
+
+    class Meta:
+        db_table = "pb_comment"
