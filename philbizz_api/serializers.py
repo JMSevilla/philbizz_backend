@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation, Menu, Blog
+from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation, Menu, Blog, Comment
 from philbizz_api.services.repository.account_repository import AccountRepository
 from philbizz_api.services.repository.auth_repository import ValidateTokenizeCommand, AuthRepository
 from philbizz_api.services.utils import ResponseCode
@@ -63,7 +63,14 @@ class MenuSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Path must start with a '/' character.")
         return value
 
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['id', 'blog', 'user', 'content', 'created_at']
+        read_only_fields = ['id', 'user', 'created_at']
+
 class BlogSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True, read_only=True)
     class Meta:
         model = Blog
         fields = ['id', 'title', 'description', 'image', 'content', 'created_at', 'updated_at']
