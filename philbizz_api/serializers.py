@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation, Menu, Blog, Comment
+from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation, Menu, Blog, Comment, Business, CardSettings, CardInfo, CardImage, CardSocial
 from philbizz_api.services.repository.account_repository import AccountRepository
 from philbizz_api.services.repository.auth_repository import ValidateTokenizeCommand, AuthRepository
 from philbizz_api.services.utils import ResponseCode
@@ -74,3 +74,28 @@ class BlogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blog
         fields = ['id', 'title', 'description', 'image', 'content', 'created_at', 'updated_at']
+
+class BusinessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Business
+        fields = ['id', 'header']
+
+class CardSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardSettings
+        fields = ['id', 'business', 'location', 'title', 'images', 'description']
+
+class CardInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardInfo
+        fields = ['id', 'card', 'name', 'contact', 'email', 'desc', 'content', 'servicetype', 'icon_image', 'location_image']
+
+class CardImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardImage
+        fields = ['id', 'card', 'image_url']
+
+class CardSocialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardSocial
+        fields = ['id', 'card', 'social_media', 'social_value']
