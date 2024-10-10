@@ -2,6 +2,7 @@ from django.urls import path
 from philbizz_api.views.account_views import AccountCreationView, AccountLoginView
 from philbizz_api.views.menu.menu_views import MenuView, MenuListView
 from philbizz_api.views.blog.blog_views import BlogView, BlogLikeView, CommentView
+from philbizz_api.views.cms.cms_views import CMSView
 from django.conf import settings
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -31,7 +32,8 @@ urlpatterns = [
     path('app/blogs', BlogView.as_view(), name='blog-list-create'),
     path('app/blogs/<uuid:blog_id>/like/', BlogLikeView.as_view(), name='blog-like'),
     path('app/blogs/<uuid:blog_id>/likes/', BlogLikeView.as_view(), name='blog-likes'),
-    path('app/blogs/<uuid:blog_id>/comments/', CommentView.as_view(), name='blog-comments')
+    path('app/blogs/<uuid:blog_id>/comments/', CommentView.as_view(), name='blog-comments'),
+    path('auth/post-card-content/', CMSView.as_view(), name='auth_post_card_content'),
 ]
 
 if settings.DEBUG:
