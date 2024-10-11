@@ -109,3 +109,68 @@ class Comment(models.Model):
 
     class Meta:
         db_table = "pb_comment"
+
+class Business(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    header = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.header
+
+    class Meta:
+        db_table = "pb_business"
+
+class CardSettings(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    business = models.ForeignKey('Business', related_name='settings', on_delete=models.CASCADE)
+    location = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
+    images = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.location}"
+
+    class Meta:
+        db_table = "pb_cardsettings"
+
+class CardInfo(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    card = models.ForeignKey('CardSettings', related_name='info', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    contact = models.CharField(max_length=255)
+    email = models.EmailField()
+    desc = models.TextField()
+    content = models.TextField()
+    servicetype = models.CharField(max_length=255)
+    icon_image = models.TextField(null=True, blank=True)
+    location_image = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "pb_cardinfo"
+
+class CardImage(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    card = models.ForeignKey('CardSettings', on_delete=models.CASCADE)
+    image_url = models.TextField()
+
+    def __str__(self):
+        return self.image_url
+
+    class Meta:
+        db_table = "pb_cardimage"
+
+class CardSocial(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    card = models.ForeignKey('CardSettings', on_delete=models.CASCADE)
+    social_media = models.CharField(max_length=255)
+    social_value = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.social_media} - {self.social_value}"
+
+    class Meta:
+        db_table = "pb_cardsocial"
