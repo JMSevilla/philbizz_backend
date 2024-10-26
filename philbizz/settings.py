@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     "philbizz_api",
     'drf_yasg',
     'rest_framework_simplejwt',
-    'ckeditor'
+    'ckeditor',
+    'corsheaders'
 ]
 
 APPEND_SLASH = False
@@ -70,6 +71,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # 'philbizz_api.middleware.ApiKeyMiddleware'
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 REST_FRAMEWORK = {
@@ -147,6 +149,28 @@ USE_I18N = True
 
 USE_TZ = True
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS"
+]
+
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
