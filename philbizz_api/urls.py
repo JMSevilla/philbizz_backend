@@ -3,6 +3,7 @@ from philbizz_api.views.account_views import AccountCreationView, AccountLoginVi
 from philbizz_api.views.menu.menu_views import MenuView, MenuListView
 from philbizz_api.views.blog.blog_views import BlogView, BlogLikeView, CommentView
 from philbizz_api.views.cms.cms_views import CMSView
+from philbizz_api.views.navbar.navbar_view import NavbarView, NavbarListView
 from django.conf import settings
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -34,6 +35,8 @@ urlpatterns = [
     path('app/blogs/<uuid:blog_id>/likes/', BlogLikeView.as_view(), name='blog-likes'),
     path('app/blogs/<uuid:blog_id>/comments/', CommentView.as_view(), name='blog-comments'),
     path('auth/post-card-content/', CMSView.as_view(), name='auth_post_card_content'),
+    path('auth/navbar/creation',NavbarView.as_view(), name='auth_post_navbar_content'),
+    path('app/navbar-list', NavbarListView.as_view(), name='navbar-list')
 ]
 
 if settings.DEBUG:
