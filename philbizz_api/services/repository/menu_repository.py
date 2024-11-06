@@ -9,12 +9,24 @@ class MenuRepository:
         created_menus = []
         errors = []
         for data in data_list:
-            menu_serializer = MenuSerializer(data=data)
-            if menu_serializer.is_valid():
-                menu_serializer.save()
-                created_menus.append(menu_serializer.data)
+            parent_data = {key: data[key] for key in data if key !='children'}
+            parent_serializer = MenuSerializer(data=parent_data)
+            if parent_serializer.is_valid():
+                parent_instance = parent_serializer.save()
+                created_menus.append(parent_serializer.data)
+
+                if 'children' in data:
+                    for child_data in data['children']:
+                        child_data['parent'] = parent_instance.id
+                        child_serializer = MenuSerializer(data=child_data)
+
+                        if child_serializer.is_valid():
+                            child_serializer.save()
+                            created_menus.append(child_serializer.data)
+                        else:
+                            errors.append({"error:": child_serializer.errors, "data": child_data})
             else:
-                errors.append({"error" : menu_serializer.errors, "data": data})
+                errors.append({"error" : parent_serializer.errors, "data": data})
         if errors:
             return Response({"created_menus": created_menus, "errors": errors}, status=status.HTTP_400_BAD_REQUEST)
         return Response(created_menus, status=status.HTTP_201_CREATED)
@@ -33,12 +45,12 @@ class MenuRepository:
                 errors.append({"id": menu_id, "error": "Menu not found."})
                 continue
 
-            menu_serializer = MenuSerializer(menu_instance, data=menu_data, partial=True)
-            if menu_serializer.is_valid():
-                menu_serializer.save()
-                updated_menus.append(menu_serializer.data)
+            parent_serializer = MenuSerializer(menu_instance, data=menu_data, partial=True)
+            if parent_serializer.is_valid():
+                parent_serializer.save()
+                updated_menus.append(parent_serializer.data)
             else:
-                errors.append({"id": menu_id, "errors": menu_serializer.errors})
+                errors.append({"id": menu_id, "errors": parent_serializer.errors})
 
         if errors:
             return Response({"updated_menus": updated_menus, "errors": errors}, status=status.HTTP_400_BAD_REQUEST)
