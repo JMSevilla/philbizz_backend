@@ -155,7 +155,7 @@ class CardInfo(models.Model):
 
 class CardImage(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    card = models.ForeignKey('CardSettings', on_delete=models.CASCADE)
+    card = models.ForeignKey('CardInfo', on_delete=models.CASCADE)
     image_url = models.TextField()
 
     def __str__(self):
@@ -166,7 +166,7 @@ class CardImage(models.Model):
 
 class CardSocial(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    card = models.ForeignKey('CardSettings', on_delete=models.CASCADE)
+    card = models.ForeignKey('CardInfo', on_delete=models.CASCADE)
     social_media = models.CharField(max_length=255)
     social_value = models.CharField(max_length=255)
 
