@@ -10,7 +10,7 @@ class NavbarRepository:
         if navbar_serializer.is_valid():
             navbar_instance = navbar_serializer.save()
 
-            navbar_name_lower = navbar_instance.name.lower()
+            navbar_name_lower = navbar_instance.name
             business_data = {"header": navbar_name_lower, "navbar": navbar_instance.id}
             business_serializer = BusinessSerializer(data=business_data)
 
@@ -37,7 +37,7 @@ class NavbarRepository:
 
             try:
                 business_instance = Business.objects.get(navbar=navbar_instance)
-                business_instance.header = updated_navbar.name.lower()
+                business_instance.header = updated_navbar.name
                 business_instance.save()
             except Business.DoesNotExist:
                 return Response({"error": "Related Business entry not found"}, status=status.HTTP_400_BAD_REQUEST)
