@@ -1,4 +1,4 @@
-from philbizz_api.models import Business, CardSettings, CardInfo, CardImage, CardSocial
+from philbizz_api.models import Business, CardSettings, CardInfo, CardImage, CardSocial, PersonInvolve
 class ContentRepository:
 
     @staticmethod
@@ -38,6 +38,15 @@ class ContentRepository:
             servicetype=servicetype,
             icon_image=icon_image,
             location_image=location_image
+        )
+
+    @staticmethod
+    def create_card_person(info_id, name, position, image ):
+        return PersonInvolve.objects.create(
+            card_id = info_id,
+            name = name,
+            position = position,
+            image = image
         )
 
     @staticmethod

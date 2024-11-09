@@ -12,6 +12,7 @@ class CMSView(APIView):
             treeview = request.data.get('Treeview')
             textline = request.data.get('Textline')
             texteditor = request.data.get('Texteditor')
+            personInvolve = request.data.get("Personnel")
 
             business = ContentRepository.get_business_by_header(treeview['name'])
             if not business:
@@ -44,6 +45,12 @@ class CMSView(APIView):
                 icon_image=textline['required']['image'],
                 location_image=textline['required']['location']
             )
+
+            for key in personInvolve['entries']:
+                name = key['personnelName']
+                position = key['position']
+                image = key['imagePreview']
+                ContentRepository.create_card_person(info_id=card_info.id, name=name, position=position, image=image)
 
             for key in textline['option']:
                 value = textline['option'][key]['value']

@@ -153,6 +153,19 @@ class CardInfo(models.Model):
     class Meta:
         db_table = "pb_cardinfo"
 
+class PersonInvolve(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    card = models.ForeignKey("cardInfo", on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, null=True)
+    position = models.CharField(max_length=255, null=True)
+    image = models.TextField(null=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        db_table = "pb_personnel"
+
 class CardImage(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     card = models.ForeignKey('CardInfo', on_delete=models.CASCADE)
