@@ -56,3 +56,59 @@ class ContentRepository:
     @staticmethod
     def create_card_social(info_id, social_media, social_value):
         return CardSocial.objects.create(card_id=info_id, social_media=social_media, social_value=social_value)
+    
+    @staticmethod
+    def view_content():
+        content_list = []
+
+        card_setting = CardSettings.objects.all()
+
+        for card in card_setting :
+            business = card.business if card.business else None
+            business_info = {
+                'id': business.navbar_id if business else None,
+                'header': business.header if business else None,
+            }
+
+            card_info = CardInfo.objects.filter(card = card)
+            card_info_list = []
+            for info in card_info:
+                people = PersonInvolve.objects.filter(card=info)
+                people_list = [{
+                    'name': person.name,
+                    'position': person.position,
+                    'image': person.image
+                } for person in people]
+
+            social_link = CardSocial.objects.filter(card=info)
+            social_link_list = [{
+                'social_media': social.social_media,
+                'social_value': social.social_value
+            } for social in social_link]
+
+            images = CardImage.objects.filter(card=info)
+            image_list = [image.image_url for image in images]
+
+            card_info_list.append({
+                 'name': info.name,
+                    'contact': info.contact,
+                    'email': info.email,
+                    'desc': info.desc,
+                    'content': info.content,
+                    'servicetype': info.servicetype,
+                    'icon_image': info.icon_image,
+                    'location_image': info.location_image,
+                    'people_involved': people_list,
+                    'social_links': social_link_list,
+                    'images': image_list
+            })
+
+            content_list.append({
+                'business': business_info,
+                'location': card.location,
+                'title': card.title,
+                'description': card.description,
+                'card_info': card_info_list
+            })
+        
+        return content_list

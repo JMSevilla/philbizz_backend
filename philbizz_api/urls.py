@@ -2,7 +2,7 @@ from django.urls import path
 from philbizz_api.views.account_views import AccountCreationView, AccountLoginView
 from philbizz_api.views.menu.menu_views import MenuView, MenuListView
 from philbizz_api.views.blog.blog_views import BlogView, BlogLikeView, CommentView
-from philbizz_api.views.cms.cms_views import CMSView
+from philbizz_api.views.cms.cms_views import CMSView, CSMViewList
 from philbizz_api.views.navbar.navbar_view import NavbarView, NavbarListView
 from django.conf import settings
 from rest_framework import permissions
@@ -48,6 +48,7 @@ urlpatterns = [
     path("auth/navbar/creation", NavbarView.as_view(), name="auth_post_navbar_content"),
     path("app/navbar-list", NavbarListView.as_view(), name="navbar-list"),
     path("app/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("app/content/list", CSMViewList.as_view(), name="content_view_list")
 ]
 
 if settings.DEBUG:

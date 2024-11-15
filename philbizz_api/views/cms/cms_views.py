@@ -65,3 +65,10 @@ class CMSView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class CSMViewList(APIView) :
+    permission_classes = []
+    def get(self, request):
+        content_list = ContentRepository.view_content()
+        return Response(content_list)
+
