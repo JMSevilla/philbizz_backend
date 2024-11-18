@@ -55,7 +55,10 @@ JWT_ISSUER_SIGNING_KEY = config(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "philbizzapi-17a61e36855d.herokuapp.com",
+    "localhost",  # Optional: Add localhost if needed for local testing
+]
 
 
 # Application definition
