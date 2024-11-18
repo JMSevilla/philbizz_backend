@@ -1,6 +1,8 @@
-import os
+
 from typing import Optional
 
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_jwt.utils import jwt_decode_handler
 from django.contrib.auth.hashers import make_password, check_password
 from uuid import UUID
 from pydantic import BaseModel, Field
@@ -9,6 +11,8 @@ import jwt
 import secrets
 from datetime import datetime, timedelta
 from django.conf import settings
+from rest_framework.permissions import BasePermission
+
 
 def hash_password(plain_text: str) -> str:
     return make_password(plain_text)
@@ -76,13 +80,15 @@ def generate_refresh_token():
 
 def create_token(claims):
     expiration_time = datetime.utcnow() + timedelta(minutes=settings.JWT_TOKEN_VALIDITY_IN_MINUTES)
+    claims["exp"] = expiration_time
 
-    claims.update({"exp": expiration_time})
-
-    token = jwt.encode(
-        claims,
-        settings.JWT_SECRET_KEY,
-        algorithm="HS256"
-    )
+    try:
+        token = jwt.encode(
+            claims,
+            settings.JWT_SECRET_KEY,
+            algorithm="HS256"
+        )
+    except Exception as e:
+        raise RuntimeError(f"Token encoding failed: {str(e)}")
 
     return token, expiration_time

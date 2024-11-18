@@ -1,6 +1,10 @@
+from django.conf import settings
 from django.db import models
 import uuid
 from enum import Enum
+from ckeditor.fields import RichTextField
+
+
 
 class AccessLevel(models.TextChoices):
     ADMIN = 'ADMIN', 'Admin'
@@ -56,3 +60,144 @@ class Accounts(models.Model):
 
     class Meta:
         db_table = "pb_accounts"
+        
+class BlackListedTokens(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    token = models.CharField(max_length=255)
+    blacklisted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "pb_blacklisted_tokens"
+
+class Menu(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    name = models.CharField(max_length=255)
+    path = models.CharField(max_length=255)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "pb_menu"
+
+class Blog(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='blogs/', blank=True, null=True)
+    content = RichTextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    likes = models.ManyToManyField(Accounts, related_name='liked_blogs', blank=True)
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        db_table = "pb_blog"
+        ordering = ['-created_at']
+
+class Comment(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    blog = models.ForeignKey('Blog', related_name='comments', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comment by {self.user} on {self.blog}"
+
+    class Meta:
+        db_table = "pb_comment"
+
+class Business(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    header = models.CharField(max_length=255)
+    navbar = models.ForeignKey('NavbarContent',  related_name='businesses', null=True , on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.header
+
+    class Meta:
+        db_table = "pb_business"
+
+class CardSettings(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    business = models.ForeignKey('Business', related_name='settings', on_delete=models.CASCADE)
+    location = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
+    images = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.location}"
+
+    class Meta:
+        db_table = "pb_cardsettings"
+
+class CardInfo(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    card = models.ForeignKey('CardSettings', related_name='info', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    contact = models.CharField(max_length=255)
+    email = models.EmailField()
+    desc = models.TextField()
+    content = models.TextField()
+    servicetype = models.CharField(max_length=255)
+    icon_image = models.TextField(null=True, blank=True)
+    location_image = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "pb_cardinfo"
+
+class PersonInvolve(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    card = models.ForeignKey("cardInfo", on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, null=True)
+    position = models.CharField(max_length=255, null=True)
+    image = models.TextField(null=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        db_table = "pb_personnel"
+
+class CardImage(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    card = models.ForeignKey('CardInfo', on_delete=models.CASCADE)
+    image_url = models.TextField()
+
+    def __str__(self):
+        return self.image_url
+
+    class Meta:
+        db_table = "pb_cardimage"
+
+class CardSocial(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    card = models.ForeignKey('CardInfo', on_delete=models.CASCADE)
+    social_media = models.CharField(max_length=255)
+    social_value = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.social_media} - {self.social_value}"
+
+    class Meta:
+        db_table = "pb_cardsocial"
+
+class NavbarContent(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    name = models.CharField(max_length=255)
+    path = models.CharField(max_length=255)
+    restrict = models.CharField(max_length=255, null=True)
+    icons = models.TextField(null=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        db_table = "pb_navbarcontent"

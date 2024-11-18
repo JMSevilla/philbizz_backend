@@ -13,6 +13,7 @@ from philbizz_api.services.validations.accounts.validation import AccountValidat
 from uuid import UUID
 from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 class InternalLinkedGuids:
@@ -126,23 +127,27 @@ class AccountRepository:
 
             roles = account.groups.values_list('name', flat=True)
 
+            if not roles:
+                roles = ['default_role']
+
             claims = {
                 'username': account.username,
                 'jti': str(uuid.uuid4()),
                 'roles': list(roles)
             }
 
-            token, expiration = create_token(claims)
-            refresh_token = generate_refresh_token()
+            refresh = RefreshToken.for_user(account)
+            access_token = str(refresh.access_token)
 
-            account.refresh_token = refresh_token
-            account.refresh_token_expiry_time = timezone.now() + timedelta(days=settings.JWT_REFRESH_TOKEN_VALIDITY_IN_DAYS)
+            account.refresh_token = str(refresh)
+            account.refresh_token_expiry_time = timezone.now() + timedelta(
+                days=settings.JWT_REFRESH_TOKEN_VALIDITY_IN_DAYS)
             account.save()
 
             return AccessInformation(
-                access_token=token,
-                refresh_token=refresh_token,
-                expiration=expiration,
+                access_token=access_token,
+                refresh_token=str(refresh),
+                expiration=refresh.access_token.payload.get('exp'),
             )
 
         except Exception as e:

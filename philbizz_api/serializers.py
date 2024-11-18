@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from philbizz_api.models import AccountStatus, AccessLevel
+from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation, Menu, Blog, Comment, Business, CardSettings, CardInfo, CardImage, CardSocial, NavbarContent, PersonInvolve
 from philbizz_api.services.repository.account_repository import AccountRepository
+from philbizz_api.services.repository.auth_repository import ValidateTokenizeCommand, AuthRepository
 from philbizz_api.services.utils import ResponseCode
 
 
@@ -29,3 +30,82 @@ class AccountLoginSerializer(serializers.Serializer):
             if process_result == ResponseCode.Unauthorized:
                 raise serializers.ValidationError({'detail': "Invalid credentials."})
         return process_result
+
+class ValidateTokenizeSerializer(serializers.Serializer):
+    access_token = serializers.CharField(write_only=True)
+    account_id = serializers.UUIDField()
+
+    def validate(self, attrs):
+        return attrs
+
+    def validate_token(self, validated_data):
+        command = ValidateTokenizeCommand(**validated_data)
+        result = AuthRepository.validate_tokenize_information(command)
+        return result
+
+class TokenizeInformationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TokenizeInformation
+        fields = '__all__'
+
+class MenuSerializer(serializers.ModelSerializer):
+    children = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Menu
+        fields = ['id', 'name', 'path', 'parent', 'children']
+
+    def get_children(self, obj):
+        return MenuSerializer(obj.children.all(), many=True).data
+
+    def validate_path(self, value):
+        if not value.startswith('/'):
+            raise serializers.ValidationError("Path must start with a '/' character.")
+        return value
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['id', 'blog', 'user', 'content', 'created_at']
+        read_only_fields = ['id', 'user', 'created_at']
+
+class BlogSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True, read_only=True)
+    class Meta:
+        model = Blog
+        fields = ['id', 'title', 'description', 'image', 'content', 'created_at', 'updated_at']
+
+class BusinessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Business
+        fields = ['id', 'header', 'navbar']
+
+class CardSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardSettings
+        fields = ['id', 'business', 'location', 'title', 'images', 'description']
+
+class CardInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardInfo
+        fields = ['id', 'card', 'name', 'contact', 'email', 'desc', 'content', 'servicetype', 'icon_image', 'location_image']
+
+class CardImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardImage
+        fields = ['id', 'card', 'image_url']
+
+class PersonInvolveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PersonInvolve
+        fields = ['id', 'card', 'name', 'position', 'image']
+
+class CardSocialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardSocial
+        fields = ['id', 'card', 'social_media', 'social_value']
+
+class NavbarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NavbarContent
+        fields = '__all__'
