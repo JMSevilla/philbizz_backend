@@ -1,7 +1,7 @@
 from django.urls import path
 from philbizz_api.views.account_views import AccountCreationView, AccountLoginView
 from philbizz_api.views.menu.menu_views import MenuView, MenuListView
-from philbizz_api.views.blog.blog_views import BlogView, BlogLikeView, CommentView
+from philbizz_api.views.blog.blog_views import BlogView, BlogLikeView, CommentView, BlogViewList
 from philbizz_api.views.cms.cms_views import CMSView, CSMViewList, CSMUpdateView
 from philbizz_api.views.navbar.navbar_view import NavbarView, NavbarListView
 from django.conf import settings
@@ -37,6 +37,7 @@ urlpatterns = [
     path("auth/menus/creation", MenuView.as_view(), name="account_menu"),
     path("app/get-menus", MenuListView.as_view(), name="app_get_menus"),
     path("app/blogs", BlogView.as_view(), name="blog-list-create"),
+    path("app/blog-list", BlogViewList.as_view(), name="view-blog-list" ),
     path("app/blogs/<uuid:blog_id>/like/", BlogLikeView.as_view(), name="blog-like"),
     path("app/blogs/<uuid:blog_id>/likes/", BlogLikeView.as_view(), name="blog-likes"),
     path(
