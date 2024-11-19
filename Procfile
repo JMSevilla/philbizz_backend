@@ -1,0 +1,1 @@
+web: gunicorn philbizz.wsgi --log-file -

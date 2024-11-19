@@ -9,15 +9,22 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+
 from datetime import timedelta
 from pathlib import Path
 from decouple import config
 from django.conf import settings
 import os
+import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "/static/"
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -25,15 +32,34 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-v1@ca(!r)0gnp6fe4tdi=dvs6^a%1e$$3c7r9xl(_x=&r4@2z("
 
-API_KEY = config('API_KEY', default="34a89f9063bb49a59d2525220b677e25",)
-JWT_SECRET_KEY = config('JWT_SECRET_KEY', default="5e77c546747306423f3c151c515d4a1266ff274eb86be6bf5e34d7fb8d4417bb",)
-JWT_TOKEN_VALIDITY_IN_MINUTES = int(config('JWT_TOKEN_VALIDITY_IN_MINUTES', default=1,))
-JWT_REFRESH_TOKEN_VALIDITY_IN_DAYS = int(config('JWT_REFRESH_TOKEN_VALIDITY_IN_DAYS', default=7))
-JWT_ISSUER_SIGNING_KEY = config('JWT_ISSUER_SIGNING_KEY', default="b384a11841c688736f8ec915ab13eaba1cec4129a7f15983f630a20a6d22f292",)
+API_KEY = config(
+    "API_KEY",
+    default="34a89f9063bb49a59d2525220b677e25",
+)
+JWT_SECRET_KEY = config(
+    "JWT_SECRET_KEY",
+    default="5e77c546747306423f3c151c515d4a1266ff274eb86be6bf5e34d7fb8d4417bb",
+)
+JWT_TOKEN_VALIDITY_IN_MINUTES = int(
+    config(
+        "JWT_TOKEN_VALIDITY_IN_MINUTES",
+        default=1,
+    )
+)
+JWT_REFRESH_TOKEN_VALIDITY_IN_DAYS = int(
+    config("JWT_REFRESH_TOKEN_VALIDITY_IN_DAYS", default=7)
+)
+JWT_ISSUER_SIGNING_KEY = config(
+    "JWT_ISSUER_SIGNING_KEY",
+    default="b384a11841c688736f8ec915ab13eaba1cec4129a7f15983f630a20a6d22f292",
+)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "philbizzapi-17a61e36855d.herokuapp.com",
+    "localhost",  # Optional: Add localhost if needed for local testing
+]
 
 
 # Application definition
@@ -47,20 +73,21 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "philbizz_api",
-    'drf_yasg',
-    'rest_framework_simplejwt',
-    'ckeditor',
-'corsheaders'
+    "drf_yasg",
+    "rest_framework_simplejwt",
+    "ckeditor",
+    "corsheaders",
+    "django_heroku",
 ]
 
 APPEND_SLASH = False
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
-    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
-    'SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER': timedelta(days=1),
-    'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+    "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
+    "SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER": timedelta(days=1),
+    "SLIDING_TOKEN_LIFETIME_LATE_USER": timedelta(days=30),
 }
 
 MIDDLEWARE = [
@@ -71,16 +98,17 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     # 'philbizz_api.middleware.ApiKeyMiddleware'
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
 }
 
@@ -108,17 +136,22 @@ WSGI_APPLICATION = "philbizz.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "philbizz_db",
-        "USER": "postgres",
-        "PASSWORD": "5418873",
-        "HOST": "localhost",
-        "PORT": "5432"
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "philbizz_db",
+#         "USER": "postgres",
+#         "PASSWORD": "5418873",
+#         "HOST": "localhost",
+#         "PORT": "5432",
+#     }
+# }
 
+DATABASES = {
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL"), conn_max_age=600, ssl_require=True
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
