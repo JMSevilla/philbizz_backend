@@ -52,10 +52,11 @@ class CMSView(APIView):
                         position = key['position']
                         image = key['imagePreview']
                         ContentRepository.create_card_person(info_id=card_info.id, name=name, position=position, image=image)
-
-            for key in textline['option']:
-                value = textline['option'][key]['value']
-                ContentRepository.create_card_image(info_id=card_info.id, image_url=value)
+            
+            if 'option' in textline and len(textline['option']) > 0 :
+                for key in textline['option']:
+                    value = textline['option'][key]['value']
+                    ContentRepository.create_card_image(info_id=card_info.id, image_url=value)
 
             for item in textline['social']:
                 social = item['social']
