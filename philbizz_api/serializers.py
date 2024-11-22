@@ -70,7 +70,7 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user', 'created_at']
 
 class BlogSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(many=True, read_only=True)
+    # comments = CommentSerializer(many=True, read_only=True)
     class Meta:
         model = Blog
         fields = ['id', 'title', 'description', 'image', 'content', 'created_at', 'updated_at']
