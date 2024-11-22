@@ -9,6 +9,8 @@ class BlogView(APIView):
     def post(self, request):
         return BlogRepository.create_blog(data=request.data)
 
+class BlogViewList(APIView):
+    permission_classes = []
     def get(self, request):
         return BlogRepository.get_all_blogs()
 
