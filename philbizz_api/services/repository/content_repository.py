@@ -197,7 +197,8 @@ class ContentRepository:
                 'location': card.location,
                 'title': card.title,
                 'address': card.description,
-                'card_info': card_info_list
+                'card_info': card_info_list,
+                'title_image': info.icon_image
             })
         
         return content_list
