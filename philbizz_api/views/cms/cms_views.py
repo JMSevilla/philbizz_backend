@@ -47,21 +47,25 @@ class CMSView(APIView):
             )
             if 'entries' in personInvolve and len(personInvolve['entries']) > 0:
                 for key in personInvolve['entries']:
-                    if len(key) > 0 : 
-                        name = key['personnelName']
-                        position = key['position']
-                        image = key['imagePreview']
+                    if isinstance(key, dict): 
+                        name = key.get('personnelName')
+                        position = key.get('position')
+                        image = key.get('imagePreview')
                         ContentRepository.create_card_person(info_id=card_info.id, name=name, position=position, image=image)
             
             if 'option' in textline and len(textline['option']) > 0 :
                 for key in textline['option']:
-                    value = textline['option'][key]['value']
-                    ContentRepository.create_card_image(info_id=card_info.id, image_url=value)
-
-            for item in textline['social']:
-                social = item['social']
-                link = item['link']
-                ContentRepository.create_card_social(info_id=card_info.id, social_media=social, social_value=link)
+                    if isinstance(key, dict):
+                        value = key.get('value')
+                        if value:
+                            ContentRepository.create_card_image(info_id=card_info.id, image_url=value)
+                            
+            if 'social' in textline:
+                for item in textline['social']:
+                    if isinstance(item, dict):
+                        social = item.get('social')
+                        link = item.get('link')
+                        ContentRepository.create_card_social(info_id=card_info.id, social_media=social, social_value=link)
 
             return Response({"message": f"New {treeview['name']} card created!"}, status=status.HTTP_201_CREATED)
 
