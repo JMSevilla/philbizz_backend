@@ -55,6 +55,7 @@ class CMSView(APIView):
             
             if 'option' in textline and len(textline['option']) > 0 :
                 for key in textline['option']:
+
                     if isinstance(key, dict):
                         value = key.get('value')
                         if value:
@@ -66,6 +67,7 @@ class CMSView(APIView):
                         social = item.get('social')
                         link = item.get('link')
                         ContentRepository.create_card_social(info_id=card_info.id, social_media=social, social_value=link)
+
 
             return Response({"message": f"New {treeview['name']} card created!"}, status=status.HTTP_201_CREATED)
 
