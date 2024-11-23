@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation, Menu, Blog, Comment, Business, CardSettings, CardInfo, CardImage, CardSocial
+from philbizz_api.models import AccountStatus, AccessLevel, TokenizeInformation, Menu, Blog, Comment, Business, CardSettings, CardInfo, CardImage, CardSocial, NavbarContent, PersonInvolve
 from philbizz_api.services.repository.account_repository import AccountRepository
 from philbizz_api.services.repository.auth_repository import ValidateTokenizeCommand, AuthRepository
 from philbizz_api.services.utils import ResponseCode
@@ -70,7 +70,7 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user', 'created_at']
 
 class BlogSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(many=True, read_only=True)
+    # comments = CommentSerializer(many=True, read_only=True)
     class Meta:
         model = Blog
         fields = ['id', 'title', 'description', 'image', 'content', 'created_at', 'updated_at']
@@ -78,7 +78,7 @@ class BlogSerializer(serializers.ModelSerializer):
 class BusinessSerializer(serializers.ModelSerializer):
     class Meta:
         model = Business
-        fields = ['id', 'header']
+        fields = ['id', 'header', 'navbar']
 
 class CardSettingsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -95,7 +95,17 @@ class CardImageSerializer(serializers.ModelSerializer):
         model = CardImage
         fields = ['id', 'card', 'image_url']
 
+class PersonInvolveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PersonInvolve
+        fields = ['id', 'card', 'name', 'position', 'image']
+
 class CardSocialSerializer(serializers.ModelSerializer):
     class Meta:
         model = CardSocial
         fields = ['id', 'card', 'social_media', 'social_value']
+
+class NavbarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NavbarContent
+        fields = '__all__'
