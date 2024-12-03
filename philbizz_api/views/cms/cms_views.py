@@ -52,6 +52,7 @@ class CMSView(APIView):
                         name = key.get('personnelName')
                         position = key.get('position')
                         image = key.get('imagePreview')
+
                         if name: 
                             ContentRepository.create_card_person(info_id=card_info.id, name=name, position=position, image=image)
 
@@ -71,6 +72,7 @@ class CMSView(APIView):
                         link = item.get('link')
                         if link:  
                             ContentRepository.create_card_social(info_id=card_info.id, social_media=social, social_value=link)
+
 
             return Response({"message": f"New {treeview['name']} card created!"}, status=status.HTTP_201_CREATED)
 
