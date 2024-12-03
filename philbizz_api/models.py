@@ -126,7 +126,7 @@ class CardSettings(models.Model):
     business = models.ForeignKey('Business', related_name='settings', on_delete=models.CASCADE)
     location = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
-    images = models.TextField(null=True, blank=True)
+    images = RichTextField()
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
@@ -142,7 +142,7 @@ class CardInfo(models.Model):
     contact = models.CharField(max_length=255, null=True)
     email = models.EmailField(null=True)
     desc = models.TextField()
-    content = models.TextField()
+    content = RichTextField()
     servicetype = models.CharField(max_length=255)
     icon_image = models.TextField(null=True, blank=True)
     location_image = models.TextField(null=True, blank=True)

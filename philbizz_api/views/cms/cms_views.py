@@ -45,27 +45,32 @@ class CMSView(APIView):
                 icon_image=textline['required']['image'],
                 location_image=textline['required']['location']
             )
-            if 'entries' in personInvolve and len(personInvolve['entries']) > 0:
+            
+            if personInvolve and isinstance(personInvolve.get('entries'), list) and personInvolve['entries']:
                 for key in personInvolve['entries']:
-                    if isinstance(key, dict): 
+                    if isinstance(key, dict):
                         name = key.get('personnelName')
                         position = key.get('position')
                         image = key.get('imagePreview')
-                        ContentRepository.create_card_person(info_id=card_info.id, name=name, position=position, image=image)
-            
-            if 'option' in textline and len(textline['option']) > 0 :
-                for key in textline['option']:
-                    if isinstance(key, dict):
-                        value = key.get('value')
-                        if value:
+                        if name: 
+                            ContentRepository.create_card_person(info_id=card_info.id, name=name, position=position, image=image)
+
+           
+            if 'option' in textline and len(textline['option']) > 0:
+                for item in textline['option']:
+                    if isinstance(item, dict):
+                        value = item.get('value')
+                        if value: 
                             ContentRepository.create_card_image(info_id=card_info.id, image_url=value)
-                            
+
+            
             if 'social' in textline:
                 for item in textline['social']:
                     if isinstance(item, dict):
                         social = item.get('social')
                         link = item.get('link')
-                        ContentRepository.create_card_social(info_id=card_info.id, social_media=social, social_value=link)
+                        if link:  
+                            ContentRepository.create_card_social(info_id=card_info.id, social_media=social, social_value=link)
 
             return Response({"message": f"New {treeview['name']} card created!"}, status=status.HTTP_201_CREATED)
 
@@ -155,9 +160,27 @@ class CSMUpdateView(APIView):
         except Exception as e:
             return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
         
-class CSMViewList(APIView) :
+class CMSViewList(APIView) :
     permission_classes = []
     def get(self, request):
-        content_list = ContentRepository.view_content()
-        return Response(content_list)
+        header = request.query_params.get('header',None)
+        if not header:
+            return Response({"error": "Header parameter is required."}, status=400)
+        content_list = ContentRepository.view_content_list()
+        filtered_content = []
+        for item in content_list:
+            if item['business']['header'] == header:
+                filtered_content.append(item)
+        
+        if filtered_content:
+            return Response(filtered_content)
+        else:
+            return Response({"message": "No content found for the specified header."}, status=404)
+        
+class CMSContentViewInfo(APIView) :
+    permission_classes = []
+    def get(self, request):
+        content_id = request.query_params.get('content', None)
+        content_view = ContentRepository.view_content(id=content_id)
+        return Response(content_view)
 
