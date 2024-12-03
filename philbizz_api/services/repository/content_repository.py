@@ -152,6 +152,10 @@ class ContentRepository:
                 'id': business.navbar_id if business else None,
                 'header': business.header if business else None,
             }
+            card_info = CardInfo.objects.filter(card=card)
+            for info in card_info:
+                description = info.desc
+
 
             content_list.append({
                 'id': card.id,
@@ -159,7 +163,8 @@ class ContentRepository:
                 'location': card.location,
                 'title': card.title,
                 'address': card.description,
-                'title_image': card.images
+                'title_image': card.images,
+                'description': description
             })
         
         return content_list
