@@ -140,29 +140,48 @@ class ContentRepository:
             return None
 
     @staticmethod
-    def view_content():
+    def view_content_list():
+
         content_list = []
 
         card_setting = CardSettings.objects.all()
-
+        
         for card in card_setting :
             business = card.business if card.business else None
             business_info = {
                 'id': business.navbar_id if business else None,
                 'header': business.header if business else None,
             }
-
-            card_info = CardInfo.objects.filter(card = card)
-            card_info_list = []
+            card_info = CardInfo.objects.filter(card=card)
             for info in card_info:
-                people = PersonInvolve.objects.filter(card=info)
-                people_list = [{
-                    'id': person.id,
-                    'name': person.name,
-                    'position': person.position,
-                    'image': person.image
-                } for person in people]
+                description = info.desc
 
+
+            content_list.append({
+                'id': card.id,
+                'business': business_info,
+                'location': card.location,
+                'title': card.title,
+                'address': card.description,
+                'title_image': card.images,
+                'description': description
+            })
+        
+        return content_list
+    
+    def view_content(id):
+        content_view = []
+        card_info = CardInfo.objects.filter(card = id)
+        
+        for info in card_info:
+            people = PersonInvolve.objects.filter(card=info)
+            people_list = [{
+                'id': person.id,
+                'name': person.name,
+                'position': person.position,
+                'image': person.image
+                } for person in people]
+            
             social_link = CardSocial.objects.filter(card=info)
             social_link_list = [{
                 'id': social.id,
@@ -176,29 +195,24 @@ class ContentRepository:
                 'images': image.image_url
             } for image in images]
 
-            card_info_list.append({
-                    'id': info.id,
-                  'name': info.name,
-                    'contact': info.contact,
-                    'email': info.email,
-                    'desc': info.desc,
-                    'content': info.content,
-                    'servicetype': info.servicetype,
-                    'icon_image': info.icon_image,
-                    'location_image': info.location_image,
-                    'people_involved': people_list,
-                    'social_links': social_link_list,
-                    'images': image_list
+
+            content_view.append({
+                'id': info.id,
+                'name': info.name,
+                'contact': info.contact,
+                'email': info.email,
+                'desc': info.desc,
+                'content': info.content,
+                'servicetype': info.servicetype,
+                'icon_image': info.icon_image,
+                'location_image': info.location_image,
+                'people_involved': people_list,
+                'social_links': social_link_list,
+                'images': image_list
             })
 
-            content_list.append({
-                'id': card.id,
-                'business': business_info,
-                'location': card.location,
-                'title': card.title,
-                'address': card.description,
-                'card_info': card_info_list,
-                'title_image': info.icon_image
-            })
-        
-        return content_list
+        return content_view
+
+
+
+
