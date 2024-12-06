@@ -222,15 +222,19 @@ class ContentRepository:
         for header in business_header:
 
             content_list = CardSettings.objects.filter(business = header)[:4]
-
             header_content = []
             for card in content_list:
+                content_info = CardInfo.objects.filter(card=card)
+                for info in content_info:
+                    description = info.desc
+
                 header_content.append({
                 'id': card.id,
                 'location': card.location,
                 'title': card.title,
                 'address': card.description,
                 'title_image': card.images,
+                'description': description
                 })
 
             main_content.append({
