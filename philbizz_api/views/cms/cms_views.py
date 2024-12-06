@@ -186,3 +186,10 @@ class CMSContentViewInfo(APIView) :
         content_view = ContentRepository.view_content(id=content_id)
         return Response(content_view)
 
+class CMSMainContentList(APIView):
+    permission_classes = []
+    def get(self, request):
+        main_content_list = ContentRepository.main_content_list()
+        return Response(main_content_list)
+
+

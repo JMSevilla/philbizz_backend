@@ -212,7 +212,32 @@ class ContentRepository:
             })
 
         return content_view
+    
+    def main_content_list() :
 
+        main_content = []
+        
+        business_header = Business.objects.all()
 
+        for header in business_header:
+
+            content_list = CardSettings.objects.filter(business = header)[:4]
+
+            header_content = []
+            for card in content_list:
+                header_content.append({
+                'id': card.id,
+                'location': card.location,
+                'title': card.title,
+                'address': card.description,
+                'title_image': card.images,
+                })
+
+            main_content.append({
+                'title': header.header,
+                'list': header_content
+            })
+
+        return main_content
 
 
