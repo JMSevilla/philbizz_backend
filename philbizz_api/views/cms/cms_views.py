@@ -1,6 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from philbizz_api.services.repository.content_repository import ContentRepository
 from philbizz_api.serializers import BusinessSerializer, CardSettingsSerializer, CardInfoSerializer, CardImageSerializer, CardSocialSerializer
@@ -166,16 +167,28 @@ class CMSViewList(APIView) :
     permission_classes = []
     def get(self, request):
         header = request.query_params.get('header',None)
+        search = request.query_params.get('search', None)
+        item_pages = 15
         if not header:
             return Response({"error": "Header parameter is required."}, status=400)
         content_list = ContentRepository.view_content_list()
-        filtered_content = []
-        for item in content_list:
-            if item['business']['header'] == header:
-                filtered_content.append(item)
+        filtered_content = [
+            item for item in content_list if item['business']['header'] == header
+        ]
+      
+        if search:
+            filtered_content = [
+                item for item in filtered_content
+                if search.lower() in item.get('title', '').lower() or
+                search.lower() in item.get('description', '').lower()
+            ]
         
+        paginator = PageNumberPagination()
+        paginator.page_size = item_pages
+        paginated_content = paginator.paginate_queryset(filtered_content, request)
+
         if filtered_content:
-            return Response(filtered_content)
+            return paginator.get_paginated_response(paginated_content)
         else:
             return Response({"message": "No content found for the specified header."}, status=404)
         
