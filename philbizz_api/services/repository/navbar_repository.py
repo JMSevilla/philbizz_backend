@@ -47,6 +47,25 @@ class NavbarRepository:
         return Response(navbar_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @staticmethod
+    def delete_navbar(nabvar_id):
+        try:
+            navbar_instance = NavbarContent.objects.filter(id=nabvar_id)
+            if not navbar_instance:
+                return Response({"error":"Navbar Not Found"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            business = Business.objects.filter(navbar=navbar_instance).first()
+            if business:
+                business.delete()
+                
+            nav_name = navbar_instance.name
+            navbar_instance.delete()
+        
+            return Response({"message":f"{nav_name} is successfully deleted!"}, status=status.HTTP_200_OK)
+        
+        except Exception as ex:
+            return Response({"error": str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @staticmethod
     def get_navbar():
         navbars = NavbarContent.objects.all()
         navbar_serializer = NavbarSerializer(navbars, many=True)

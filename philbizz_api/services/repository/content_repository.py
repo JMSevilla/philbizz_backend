@@ -244,4 +244,23 @@ class ContentRepository:
 
         return main_content
 
+    def delete_content(content_id):
+        try:
+            card = CardSettings.objects.filter(id=content_id)
+            if not card:
+                return {"error":"Content Not Found"}
+            
+            card_info = CardInfo.objects.filter(card=card)
+            for info in card_info:
+                CardImage.objects.filter(info=info).delete()
+                CardSocial.objects.filter(info=info).delete()
+                PersonInvolve.objects.filter(info=info).delete()
+                
+                info.delete()
 
+            card.delete()
+
+            return {"message": f"{card.title} deleted successfully!"}
+        
+        except Exception as ex:
+            return {"error":str(ex)}

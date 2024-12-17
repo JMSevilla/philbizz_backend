@@ -82,6 +82,28 @@ class MenuRepository:
         if errors:
             return Response({"updated_menus": updated_menus, "errors": errors}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"updated_menus": updated_menus}, status=status.HTTP_200_OK)
+    
+    @staticmethod
+    def delete_menus(menu_id):
+        try:
+            parent_menu = Menu.objects.filter(id=menu_id)
+
+            if not parent_menu:
+                return Response({"error":"Menu Not Found"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            child_menu = Menu.objects.filter(parent=parent_menu)
+            
+            if child_menu.exists():
+                delete_child_count = child_menu.count()
+                child_menu.delete()
+                parent_menu.delete()
+                return Response({"message":f"Menus Delete including its child menus {delete_child_count}"}, status=status.HTTP_200_OK)
+            
+            parent_title  = parent_menu.title
+            parent_menu.delete()
+            return Response({"message":f"Menu {parent_title} deleted successfully!"}, status=status.HTTP_200_OK)
+        except Exception as ex:
+            return Response({"error":str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @staticmethod
     def get_menus():

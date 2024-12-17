@@ -3,6 +3,7 @@ from philbizz_api.views.account_views import AccountCreationView, AccountLoginVi
 from philbizz_api.views.menu.menu_views import MenuView, MenuListView
 from philbizz_api.views.blog.blog_views import BlogView, BlogLikeView, CommentView, BlogViewList
 from philbizz_api.views.cms.cms_views import CMSView, CMSViewList, CSMUpdateView,CMSContentViewInfo, CMSMainContentList
+from philbizz_api.views.cms.cms_delete import CMSDeleteContent
 from philbizz_api.views.navbar.navbar_view import NavbarView, NavbarListView
 from django.conf import settings
 from rest_framework import permissions
@@ -52,7 +53,8 @@ urlpatterns = [
     path("app/content/list", CMSViewList.as_view(), name="content_view_list"),
     path("auth/put-card-content/", CSMUpdateView.as_view(), name="auth_update_content_form" ),
     path("app/content/view/info", CMSContentViewInfo.as_view(), name="content_view_info"),
-    path("app/main-content/view/list", CMSMainContentList.as_view(), name="main page content list" )
+    path("app/main-content/view/list", CMSMainContentList.as_view(), name="main_page_content_list" ),
+    path("auth/delete/card-content", CMSDeleteContent.as_view(), name="delete_content_data" )
 ]
 
 if settings.DEBUG:
